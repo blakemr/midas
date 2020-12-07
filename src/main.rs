@@ -39,7 +39,7 @@ fn main() -> io::Result<()> {
         }
 
         c_pos = termout.cursor_pos()?;
-        write!(termout, "{}{}", text, cursor::Goto(1, 1))?;
+        write!(termout, "{}{}{}", clear::All, text, cursor::Goto(1, 1))?;
         termout.flush()?;
         write!(termout, "{}", cursor::Goto(c_pos.0, c_pos.1));
     }

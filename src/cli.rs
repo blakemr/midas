@@ -45,6 +45,10 @@ impl Mode {
             Event::Key(Key::Char(c)) => {
                 text.push(c);
             }
+            Event::Key(Key::Backspace) => {
+                text.pop();
+            }
+            // These are placeholder commands
             Event::Key(Key::Alt(c)) => {
                 text.push_str("Alt-");
                 text.push(c);
