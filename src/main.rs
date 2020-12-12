@@ -24,9 +24,9 @@ fn main() -> io::Result<()> {
         "\r"
     )?;
 
-    // Flush to screen
     termout.flush()?;
 
+    // Main loop.
     loop {
         if let Some(event) = events.next() {
             mode = match mode.handle(event?, &mut command, &mut text) {
