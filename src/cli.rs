@@ -3,6 +3,12 @@
 //! This crate is called when midas is run in terminal editor mode.
 use termion::event::{Event, Key};
 
+/// Cursor position in terminal
+pub struct Cursor {
+    pub x: u16,
+    pub y: u16,
+}
+
 /// Sets up the modes of operation. These are named after the standards
 /// set by vim, but may be changed slightly since the modal commands are intended
 /// to work with a gui from the ground up.
@@ -27,7 +33,13 @@ impl Mode {
     ///     * Normal Mode
     ///     * Command Mode
     ///     * change text's type?
-    pub fn handle(self, event: Event, command: &mut String, text: &mut String) -> Self {
+    pub fn handle(
+        self,
+        event: Event,
+        command: &mut String,
+        text: &mut String,
+        cursor: &mut Cursor,
+    ) -> Self {
         match self {
             Mode::Normal => Mode::Normal,
             Mode::Insert => Mode::handle_insert(event, text),

@@ -1,5 +1,6 @@
 mod cli;
 
+use cli::Cursor;
 use cli::Mode;
 use std::io;
 use std::io::{stdin, stdout, Write};
@@ -15,12 +16,15 @@ fn main() -> io::Result<()> {
     let mut text = String::new();
     let mut command = String::new();
 
+    // Terminal cursor position starts at (1, 1)
+    let mut cursor_position: Cursor = Cursor { x: 1, y: 1 };
+
     // Landing message
     write!(
         termout,
         "{}{}<Esc> to exit. Type stuff, use alt, etc.{}",
         clear::All,
-        cursor::Goto(1, 1),
+        cursor::Goto(cursor_position.x, cursor_position.y),
         "\r"
     )?;
 
@@ -29,13 +33,19 @@ fn main() -> io::Result<()> {
     // Main loop.
     loop {
         if let Some(event) = events.next() {
-            mode = match mode.handle(event?, &mut command, &mut text) {
+            mode = match mode.handle(event?, &mut command, &mut text, &mut cursor_position) {
                 Mode::Exit => break,
                 mode => mode,
             }
         }
 
-        write!(termout, "{}{}{}", clear::All, cursor::Goto(1, 1), text)?;
+        write!(
+            termout,
+            "{}{}{}",
+            clear::All,
+            cursor::Goto(cursor_position.x, cursor_position.y),
+            text
+        )?;
         termout.flush()?;
     }
 
