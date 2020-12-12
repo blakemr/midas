@@ -9,15 +9,21 @@ use termion::{clear, cursor};
 
 fn main() -> io::Result<()> {
     let mut mode = Mode::Normal;
+
     let stdin = stdin();
     let mut events = stdin.events();
     let mut termout = stdout().into_raw_mode()?;
+
     let mut text = String::new();
     let mut command = String::new();
 
     // Landing message
-    text = "<Esc> to exit. Type stuff.".to_string();
-    write!(termout, "{}{}{}", clear::All, cursor::Goto(1, 1), text)?;
+    write!(
+        termout,
+        "{}{}<Esc> to exit. Type stuff.",
+        clear::All,
+        cursor::Goto(1, 1),
+    )?;
     termout.flush()?;
 
     // Main loop.
