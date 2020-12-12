@@ -3,11 +3,8 @@
 //! This crate is called when midas is run in terminal editor mode.
 use termion::event::{Event, Key};
 
-/// Cursor position in terminal
-pub struct Cursor {
-    pub x: u16,
-    pub y: u16,
-}
+use std::fs::File;
+use std::io::Write;
 
 /// Sets up the modes of operation. These are named after the standards
 /// set by vim, but may be changed slightly since the modal commands are intended
@@ -33,15 +30,9 @@ impl Mode {
     ///     * Normal Mode
     ///     * Command Mode
     ///     * change text's type?
-    pub fn handle(
-        self,
-        event: Event,
-        command: &mut String,
-        text: &mut String,
-        cursor: &mut Cursor,
-    ) -> Self {
+    pub fn handle(self, event: Event, command: &mut String, text: &mut String) -> Self {
         match self {
-            Mode::Normal => Mode::Normal,
+            Mode::Normal => Mode::handle_normal(event, text),
             Mode::Insert => Mode::handle_insert(event, text),
             Mode::Command => Mode::Command,
             Mode::Exit => panic!("Unhandled Exit mode."),
@@ -52,7 +43,7 @@ impl Mode {
     fn handle_insert(event: Event, text: &mut String) -> Self {
         match event {
             Event::Key(Key::Esc) => {
-                return Mode::Exit;
+                return Mode::Normal;
             }
             Event::Key(Key::Char(c)) => {
                 text.push(c);
@@ -85,5 +76,24 @@ impl Mode {
         }
 
         Mode::Insert
+    }
+
+    // Handles events in normal modecursor: &mut Cursor
+    fn handle_normal(event: Event, text: &mut String) -> Self {
+        match event {
+            Event::Key(Key::Char('i')) => {
+                return Mode::Insert;
+            }
+            Event::Key(Key::Esc) => {
+                return Mode::Exit;
+            }
+            Event::Key(Key::Char('w')) => {
+                let mut file = File::create("foo.txt").unwrap();
+                write!(file, "{}", text);
+            }
+            _ => {}
+        }
+
+        Mode::Normal
     }
 }
