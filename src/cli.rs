@@ -1,20 +1,12 @@
 //! # Manage the CLI version of the text editor
 //!
 //! This crate is called when midas is run in terminal editor mode.
+
+use crate::modes::Mode;
 use termion::event::{Event, Key};
 
 use std::fs::File;
 use std::io::Write;
-
-/// Sets up the modes of operation. These are named after the standards
-/// set by vim, but may be changed slightly since the modal commands are intended
-/// to work with a gui from the ground up.
-pub enum Mode {
-    Normal,
-    Insert,
-    Command,
-    Exit,
-}
 
 impl Mode {
     /// Handles an input event

@@ -1,6 +1,7 @@
 mod cli;
+mod modes;
 
-use cli::Mode;
+use modes::Mode;
 use std::io;
 use std::io::{stdin, stdout, Write};
 use termion::input::TermRead;
