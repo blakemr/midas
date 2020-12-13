@@ -85,8 +85,7 @@ impl Mode {
                 return Mode::Exit;
             }
             Event::Key(Key::Char('w')) => {
-                let mut file = File::create("foo.txt").unwrap();
-                write!(file, "{}", text);
+                text.save();
             }
             _ => {}
         }

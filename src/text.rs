@@ -28,7 +28,7 @@ impl Text {
     }
 
     /// clears the text, resets the cursor position.
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.text = Rope::new();
         self.pos = 0;
     }
@@ -38,7 +38,7 @@ impl Text {
     /// args:
     ///     * f: String - Filepath to read from. If the file does not exist,
     ///         a new Text is made with this path as its name.
-    fn open_file(&mut self, f: String) -> Result<()> {
+    pub fn open_file(&mut self, f: String) -> Result<()> {
         if Path::new(&f).exists() {
             self.text = Rope::from_reader(BufReader::new(File::open(&f)?))?;
             self.path = f;
@@ -47,11 +47,11 @@ impl Text {
             self.path = f;
             self.clear();
         }
-        Ok()
+        Ok(())
     }
 
     /// Saves the current document into a file.
-    fn save(&mut self) -> Result<()> {
+    pub fn save(&mut self) -> Result<()> {
         // Throw error if the current document is unnamed
         // TODO: Automatically promopt the user to name the file.
         if self.path.is_empty() {
@@ -64,7 +64,7 @@ impl Text {
         // Write the document into the file.
         // TODO: It might be better to only partially rewrite the
         //       file if it's been saved before
-        let mut file = File::create(&self.name)?;
+        let mut file = File::create(&self.path)?;
         for chunk in self.text.chunks() {
             write!(file, "{}", chunk)?;
         }
@@ -74,7 +74,24 @@ impl Text {
     }
 
     /// Renames the current file
-    fn rename(&mut self, path: String) {
+    pub fn rename(&mut self, path: String) {
         self.path = path;
+    }
+
+    pub fn push(&mut self, c: char) {
+        self.text.insert_char(self.pos, c);
+        self.pos += 1;
+    }
+
+    pub fn pop(&mut self) {
+        if self.pos > 0 {
+            self.pos -= 1;
+            self.text.remove(self.pos..self.pos + 1);
+        }
+    }
+
+    pub fn push_str(&mut self, s: &str) {
+        self.text.insert(self.pos, s);
+        self.pos += s.len();
     }
 }
