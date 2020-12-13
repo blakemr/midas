@@ -1,5 +1,6 @@
 mod cli;
 mod modes;
+mod text;
 
 use modes::Mode;
 use std::io;
@@ -7,6 +8,7 @@ use std::io::{stdin, stdout, Write};
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 use termion::{clear, cursor};
+use text::Text;
 
 fn main() -> io::Result<()> {
     let mut mode = Mode::Normal;
@@ -15,7 +17,7 @@ fn main() -> io::Result<()> {
     let mut events = stdin.events();
     let mut termout = stdout().into_raw_mode()?;
 
-    let mut text = String::new();
+    let mut text = Text::new();
     let mut command = String::new();
 
     // Landing message
@@ -36,7 +38,10 @@ fn main() -> io::Result<()> {
             }
         }
 
-        write!(termout, "{}{}{}", clear::All, cursor::Goto(1, 1), text)?;
+        write!(termout, "{}{}", clear::All, cursor::Goto(1, 1));
+        for line in text.text.lines() {
+            write!(termout, "{}", line);
+        }
         termout.flush()?;
     }
 
